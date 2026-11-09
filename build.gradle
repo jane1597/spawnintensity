@@ -1,0 +1,57 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+version = '1.2.0'
+group = 'com.spawnintensity'
+
+base {
+    archivesName = 'spawnintensity'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+}
+
+repositories {
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.3.0'
+}
+
+// All files sit in one flat folder, so tell Gradle where each file is.
+sourceSets {
+    main {
+        java {
+            srcDirs = ['.']
+            include '*.java'
+        }
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    from('.') { include 'pack.mcmeta' }
+    from('.') {
+        include 'mods.toml'
+        into 'META-INF'
+    }
+    from('.') {
+        include 'global_loot_modifiers.json'
+        into 'data/forge/loot_modifiers'
+    }
+    from('.') {
+        include 'multiplier.json'
+        into 'data/spawnintensity/loot_modifiers'
+    }
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
